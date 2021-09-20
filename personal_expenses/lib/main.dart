@@ -55,8 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
     Transaction(
       id: 't1',
-      title: 'New trousers',
-      amount: 69.99,
+      title: 'New shoes',
+      amount: 79.99,
       date: DateTime.now().subtract(Duration(days: 2)),
     ),
     Transaction(
@@ -66,41 +66,41 @@ class _MyHomePageState extends State<MyHomePage> {
       date: DateTime.now().subtract(Duration(days: 3)),
     ),
     Transaction(
-      id: 't1',
+      id: 't3',
       title: 'New trousers',
       amount: 69.99,
-      date: DateTime.now().subtract(Duration(days: 2)),
+      date: DateTime.now().subtract(Duration(days: 4)),
     ),
-    Transaction(
-      id: 't2',
-      title: 'New t-shirt',
-      amount: 29.99,
-      date: DateTime.now().subtract(Duration(days: 3)),
-    ),
-    Transaction(
-      id: 't1',
-      title: 'New trousers',
-      amount: 69.99,
-      date: DateTime.now().subtract(Duration(days: 2)),
-    ),
-    Transaction(
-      id: 't2',
-      title: 'New t-shirt',
-      amount: 29.99,
-      date: DateTime.now().subtract(Duration(days: 3)),
-    ),
-    Transaction(
-      id: 't1',
-      title: 'New trousers',
-      amount: 69.99,
-      date: DateTime.now().subtract(Duration(days: 2)),
-    ),
-    Transaction(
-      id: 't2',
-      title: 'New t-shirt',
-      amount: 29.99,
-      date: DateTime.now().subtract(Duration(days: 3)),
-    ),
+    // Transaction(
+    //   id: 't4',
+    //   title: 'New t-shirt',
+    //   amount: 29.99,
+    //   date: DateTime.now().subtract(Duration(days: 3)),
+    // ),
+    // Transaction(
+    //   id: 't5',
+    //   title: 'New trousers',
+    //   amount: 69.99,
+    //   date: DateTime.now().subtract(Duration(days: 2)),
+    // ),
+    // Transaction(
+    //   id: 't6',
+    //   title: 'New t-shirt',
+    //   amount: 29.99,
+    //   date: DateTime.now().subtract(Duration(days: 3)),
+    // ),
+    // Transaction(
+    //   id: 't7',
+    //   title: 'New trousers',
+    //   amount: 69.99,
+    //   date: DateTime.now().subtract(Duration(days: 2)),
+    // ),
+    // Transaction(
+    //   id: 't8',
+    //   title: 'New t-shirt',
+    //   amount: 29.99,
+    //   date: DateTime.now().subtract(Duration(days: 3)),
+    // ),
   ];
 
   bool _showChart = false;
@@ -140,11 +140,58 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final isLandscape = mediaQuery.orientation == Orientation.landscape;
-    final PreferredSizeWidget appBar = Platform.isIOS
+  List<Widget> _buildLandscapeContent(
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+    Widget txListWidget,
+  ) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'Show chart',
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          Switch.adaptive(
+            activeColor: Theme.of(context).colorScheme.secondary,
+            value: _showChart,
+            onChanged: (val) {
+              setState(() {
+                _showChart = val;
+              });
+            },
+          ),
+        ],
+      ),
+      _showChart
+          ? Container(
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.7,
+              child: Chart(_userTransactions),
+            )
+          : txListWidget,
+    ];
+  }
+
+  List<Widget> _buildPortraitContent(
+      MediaQueryData mediaQuery, AppBar appBar, txListWidget) {
+    return [
+      Container(
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top) *
+            0.25,
+        child: Chart(_userTransactions),
+      ),
+      txListWidget
+    ];
+  }
+
+  Widget _buildAppBar() {
+    return Platform.isIOS
         ? CupertinoNavigationBar(
             middle: Text('Personal Expenses'),
             trailing: Row(
@@ -168,6 +215,13 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+    final PreferredSizeWidget appBar = _buildAppBar();
 
     final txListWidget = Container(
       child: TransactionList(_userTransactions, _deleteTransaction),
@@ -184,43 +238,17 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             if (isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Show chart', 
-                    style: Theme.of(context).textTheme.headline5,
-                  ),
-                  Switch.adaptive(
-                    activeColor: Theme.of(context).colorScheme.secondary,
-                    value: _showChart,
-                    onChanged: (val) {
-                      setState(() {
-                        _showChart = val;
-                      });
-                    },
-                  )
-                ],
+              ..._buildLandscapeContent(
+                mediaQuery,
+                appBar,
+                txListWidget,
               ),
             if (!isLandscape)
-              Container(
-                height: (mediaQuery.size.height -
-                        appBar.preferredSize.height -
-                        mediaQuery.padding.top) *
-                    0.25,
-                child: Chart(_userTransactions),
+              ..._buildPortraitContent(
+                mediaQuery,
+                appBar,
+                txListWidget,
               ),
-            if (!isLandscape) txListWidget,
-            if (isLandscape)
-              _showChart
-                  ? Container(
-                      height: (mediaQuery.size.height -
-                              appBar.preferredSize.height -
-                              mediaQuery.padding.top) *
-                          0.7,
-                      child: Chart(_userTransactions),
-                    )
-                  : txListWidget,
           ],
         ),
       ),
