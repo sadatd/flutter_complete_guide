@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/cart.dart'
-    show
-        Cart; // show import only 'Cart', we use this if there more classes defined in same file
+// show import only 'Cart', we use this if there more classes defined in same file
+import '../providers/cart.dart' show Cart;
 import '../widgets/cart_item.dart';
+import '../providers/orders.dart';
 
 class CartScreen extends StatelessWidget {
   static const String routeName = '/cart';
@@ -40,7 +40,13 @@ class CartScreen extends StatelessWidget {
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Provider.of<Orders>(context, listen: false).addOrder(
+                        cart.items.values.toList(),
+                        cart.totalAmount,
+                      );
+                      cart.clear(); 
+                    },
                     child: Text('ORDER NOW'),
                     textColor: Theme.of(context).primaryColor,
                   ),
@@ -55,12 +61,11 @@ class CartScreen extends StatelessWidget {
             child: ListView.builder(
               itemBuilder: (ctx, i) {
                 return CartItem(
-                  cart.items.values.toList()[i].id,
-                  cart.items.keys.toList()[i],
-                  cart.items.values.toList()[i].price,
-                  cart.items.values.toList()[i].quantity, 
-                  cart.items.values.toList()[i].title
-                );
+                    cart.items.values.toList()[i].id,
+                    cart.items.keys.toList()[i],
+                    cart.items.values.toList()[i].price,
+                    cart.items.values.toList()[i].quantity,
+                    cart.items.values.toList()[i].title);
               },
               itemCount: cart.itemCount,
             ),
