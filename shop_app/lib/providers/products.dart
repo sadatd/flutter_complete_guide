@@ -37,12 +37,30 @@ class Products with ChangeNotifier {
     ),
   ];  
 
+  var   _showFavoritesOnly = false; // it is for filtering data globally
+
   List<Product> get items {
+    //it is for filtering data globally
+    if (_showFavoritesOnly) {
+      return _items.where((prodItem) => prodItem.isFavorite).toList();
+    }
     return [..._items];
   }
 
   Product findById(String productId) {
     return _items.firstWhere((prod) => prod.id == productId);
+  }
+
+  // it is for filtering data globally
+  void showFavoritesOnly() {
+    _showFavoritesOnly = true;
+    notifyListeners();
+  }
+
+  // it is for filtering data globally
+  void showAll() {
+    _showFavoritesOnly = false;
+    notifyListeners();
   }
 
   void addProduct(){

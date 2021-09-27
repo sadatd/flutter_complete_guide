@@ -23,7 +23,9 @@ class ProductItem extends StatelessWidget {
         ),
         footer: GridTileBar(
           leading: Consumer<Product>(
-            builder:(ctx, product, _) => IconButton(
+            // It is (ctx, product, child) but we don't need child here.
+            // child is used for widgets that don't update
+            builder:(ctx, product, _) => IconButton( 
               icon: Icon(
                 product.isFavorite ? Icons.favorite : Icons.favorite_border,
               ),
