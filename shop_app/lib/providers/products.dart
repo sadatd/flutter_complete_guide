@@ -41,10 +41,14 @@ class Products with ChangeNotifier {
 
   List<Product> get items {
     //it is for filtering data globally
-    if (_showFavoritesOnly) {
-      return _items.where((prodItem) => prodItem.isFavorite).toList();
-    }
+    // if (_showFavoritesOnly) {
+      // return _items.where((prodItem) => prodItem.isFavorite).toList();
+    // }
     return [..._items];
+  }
+
+  List<Product> get favoritesItems {
+      return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
   Product findById(String productId) {
