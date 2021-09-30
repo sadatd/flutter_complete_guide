@@ -27,7 +27,7 @@ class ProductItem extends StatelessWidget {
           leading: Consumer<Product>(
             // It is (ctx, product, child) but we don't need child here.
             // child is used for widgets that don't update
-            builder:(ctx, product, _) => IconButton( 
+            builder: (ctx, product, _) => IconButton(
               icon: Icon(
                 product.isFavorite ? Icons.favorite : Icons.favorite_border,
               ),
@@ -46,6 +46,16 @@ class ProductItem extends StatelessWidget {
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
               cart.addItems(product.id, product.price, product.title);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Item added to cart'),
+                  duration: Duration(seconds: 2),
+                  action: SnackBarAction(label: 'UNDO', onPressed: () {
+                    cart.removeSingleItem(product.id);
+                  }),
+                ),
+              );
             },
             color: Theme.of(context).accentColor,
           ),

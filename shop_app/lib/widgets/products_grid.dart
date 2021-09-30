@@ -19,7 +19,7 @@ class ProductsGrid extends StatelessWidget {
       itemCount: products.length,
       itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
         // create: (c) => products[i],
-        value: products[i], // used when no context needed and when used as item of grid or  list
+        value: products[i], // used when no context needed and when used as item of grid or list
         child: ProductItem(),
       ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/screens/user_products_screen.dart';
 import 'package:provider/provider.dart';
 
 import './screens/cart_screen.dart';
@@ -14,8 +15,8 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    
     // 'value:' is used when context is not needed and object is already initiated (ex. products[i])
-    // value: Products(), 
     // 'create:' is used when new object is initiated(ex. Products())
     return  MultiProvider(providers: [
       ChangeNotifierProvider(
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
           CartScreen.routeName: (ctx) => CartScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           OrdersScreen.routeName: (ctx) => OrdersScreen(),
+          UserProductsScreen.routeName: (ctx) => UserProductsScreen(),
         },
       ),
     );

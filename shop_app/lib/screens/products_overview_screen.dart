@@ -28,15 +28,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         actions: <Widget>[
           PopupMenuButton(
             icon: Icon(Icons.more_vert),
-            onSelected: (FilterOptions selectedValue) {
-              setState(() {
-                if (selectedValue == FilterOptions.Favorites) {
-                  _showOnlyFavorites = true;
-                } else {
-                  _showOnlyFavorites = false;
-                }
-              });
-            },
             itemBuilder: (_) => [
               PopupMenuItem(
                 child: Text('Only favorites'),
@@ -47,6 +38,15 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 value: FilterOptions.All,
               ),
             ],
+            onSelected: (FilterOptions selectedValue) {
+              setState(() {
+                if (selectedValue == FilterOptions.Favorites) {
+                  _showOnlyFavorites = true;
+                } else {
+                  _showOnlyFavorites = false;
+                }
+              });
+            },
           ),
           Consumer<Cart>(
             builder: (_, cart, ch) => Badge( // 'ch' is below defined child that doesn't need to change
