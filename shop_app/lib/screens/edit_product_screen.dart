@@ -45,6 +45,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _saveForm() {
+    final isValid = _form.currentState.validate();
+    if (!isValid){
+      return;
+    }
     _form.currentState.save();
     print(_editedProduct.title);
     print(_editedProduct.price);
@@ -71,7 +75,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
-                decoration: InputDecoration(labelText: 'Title'),
+                decoration: InputDecoration(labelText: 'Title',),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
@@ -84,6 +88,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     imageUrl: _editedProduct.imageUrl,
                     id: null,
                   );
+                },
+                validator: (value) {
+                  if (value.isEmpty){
+                    return 'Please enter a title'; // if there is error
+                  }
+                  return null; // if there is NO error.
                 },
               ),
               TextFormField(
@@ -103,6 +113,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     id: null,
                   );
                 },
+                validator: (value) {
+                  if (value.isEmpty){
+                    return 'Please enter a price'; // if there is error
+                  }
+                  if (double.tryParse(value) == null){
+                    return 'Please enter a valid price';
+                  }
+                  if (double.parse(value) <= 0){
+                    return 'Please enter number greater than 0';
+                  }
+                  return null; // if there is NO error.
+                }, 
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Description'),
@@ -117,6 +139,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     imageUrl: _editedProduct.imageUrl,
                     id: null,
                   );
+                },
+                validator: (value) {
+                  if (value.isEmpty){
+                    return 'Please enter a descritpions'; // if there is error
+                  }
+                  if (value.length < 10){
+                    return 'Please enter longer descritpions'; // if there is error
+                  }
+                  return null; // if there is NO error.
                 },
               ),
               Row(
