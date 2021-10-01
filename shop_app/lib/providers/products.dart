@@ -35,20 +35,20 @@ class Products with ChangeNotifier {
       imageUrl:
           'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     ),
-  ];  
+  ];
 
-  var   _showFavoritesOnly = false; // it is for filtering data globally
+  var _showFavoritesOnly = false; // it is for filtering data globally
 
   List<Product> get items {
     //it is for filtering data globally
     // if (_showFavoritesOnly) {
-      // return _items.where((prodItem) => prodItem.isFavorite).toList();
+    // return _items.where((prodItem) => prodItem.isFavorite).toList();
     // }
     return [..._items];
   }
 
   List<Product> get favoritesItems {
-      return _items.where((prodItem) => prodItem.isFavorite).toList();
+    return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
   Product findById(String productId) {
@@ -67,8 +67,15 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  void addProduct(){
-    // _items.add(value);
+  void addProduct(Product product) {
+    final newProduct = Product(
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      id: DateTime.now().toString(),
+    );
+    _items.add(newProduct);
     notifyListeners();
   }
 }

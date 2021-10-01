@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/providers/products.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
 
@@ -15,6 +17,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlControler = TextEditingController();
   final _form = GlobalKey<FormState>();
+  var _isInit = true;
+
   Product _editedProduct = Product(
     id: null,
     description: '',
@@ -23,10 +27,37 @@ class _EditProductScreenState extends State<EditProductScreen> {
     imageUrl: '',
   );
 
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': '',
+  };
+
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productId = ModalRoute.of(context).settings.arguments;
+      if (productId != null) {
+        _editedProduct =
+            Provider.of<Products>(context, listen: false).findById(productId);
+        _initValues = {
+          'title': _editedProduct.title,
+          'description': _editedProduct.description,
+          'price': _editedProduct.price.toString(),
+          // 'imageUrl': _editedProduct.imageUrl,
+        };
+        _imageUrlControler.text = _editedProduct.imageUrl;
+      }
+    }
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   @override
@@ -46,14 +77,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _saveForm() {
     final isValid = _form.currentState.validate();
-    if (!isValid){
+    if (!isValid) {
       return;
     }
     _form.currentState.save();
-    print(_editedProduct.title);
-    print(_editedProduct.price);
-    print(_editedProduct.description);
-    print(_editedProduct.imageUrl);    
+    if (_editedProduct.id != null){
+      Provider.of<Products>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
+    } else {
+      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    }
+    Navigator.of(context).pop();
   }
 
   @override
@@ -75,7 +108,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
-                decoration: InputDecoration(labelText: 'Title',),
+                initialValue: _initValues['title'],
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                ),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
@@ -90,13 +126,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   );
                 },
                 validator: (value) {
-                  if (value.isEmpty){
+                  if (value.isEmpty) {
                     return 'Please enter a title'; // if there is error
                   }
                   return null; // if there is NO error.
                 },
               ),
               TextFormField(
+                initialValue: _initValues['price'],
                 decoration: InputDecoration(labelText: 'Price'),
                 focusNode: _priceFocusNode,
                 onFieldSubmitted: (_) {
@@ -114,19 +151,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   );
                 },
                 validator: (value) {
-                  if (value.isEmpty){
+                  if (value.isEmpty) {
                     return 'Please enter a price'; // if there is error
                   }
-                  if (double.tryParse(value) == null){
+                  if (double.tryParse(value) == null) {
                     return 'Please enter a valid price';
                   }
-                  if (double.parse(value) <= 0){
+                  if (double.parse(value) <= 0) {
                     return 'Please enter number greater than 0';
                   }
                   return null; // if there is NO error.
-                }, 
+                },
               ),
               TextFormField(
+                initialValue: _initValues['description'],
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 focusNode: _descriptionFocusNode,
@@ -141,10 +179,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   );
                 },
                 validator: (value) {
-                  if (value.isEmpty){
+                  if (value.isEmpty) {
                     return 'Please enter a descritpions'; // if there is error
                   }
-                  if (value.length < 10){
+                  if (value.length < 10) {
                     return 'Please enter longer descritpions'; // if there is error
                   }
                   return null; // if there is NO error.
@@ -177,6 +215,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   ),
                   Expanded(
                     child: TextFormField(
+                      initialValue: _initValues['imageUrl'],
                       decoration: InputDecoration(labelText: 'Image URL'),
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
@@ -196,6 +235,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           imageUrl: value,
                           id: null,
                         );
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter an image URL';
+                        }
+                        if (!value.startsWith('http') &&
+                            !value.startsWith('https')) {
+                          return 'Please enter a valid URL';
+                        }
+                        return null;
                       },
                     ),
                   )
