@@ -44,7 +44,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void didChangeDependencies() {
     if (_isInit) {
       final productId = ModalRoute.of(context).settings.arguments;
-      if (productId != null) {
+      if (productId != null) { // We have ID, thus we edit existing product
         _editedProduct =
             Provider.of<Products>(context, listen: false).findById(productId);
         _initValues = {
@@ -52,6 +52,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           'description': _editedProduct.description,
           'price': _editedProduct.price.toString(),
           // 'imageUrl': _editedProduct.imageUrl,
+          'imageUrl': '',
         };
         _imageUrlControler.text = _editedProduct.imageUrl;
       }
@@ -81,8 +82,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
       return;
     }
     _form.currentState.save();
-    if (_editedProduct.id != null){
-      Provider.of<Products>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
+    if (_editedProduct.id != null) {
+      Provider.of<Products>(context, listen: false)
+          .updateProduct(_editedProduct.id, _editedProduct);
     } else {
       Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
     }
@@ -122,7 +124,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     price: _editedProduct.price,
                     description: _editedProduct.description,
                     imageUrl: _editedProduct.imageUrl,
-                    id: null,
+                    id: _editedProduct.id,
+                    isFavorite: _editedProduct.isFavorite,
                   );
                 },
                 validator: (value) {
@@ -147,7 +150,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     price: double.parse(value),
                     description: _editedProduct.description,
                     imageUrl: _editedProduct.imageUrl,
-                    id: null,
+                    id: _editedProduct.id,
+                    isFavorite: _editedProduct.isFavorite,
                   );
                 },
                 validator: (value) {
@@ -175,7 +179,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     price: _editedProduct.price,
                     description: value,
                     imageUrl: _editedProduct.imageUrl,
-                    id: null,
+                    id: _editedProduct.id,
+                    isFavorite: _editedProduct.isFavorite,
                   );
                 },
                 validator: (value) {
@@ -215,7 +220,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   ),
                   Expanded(
                     child: TextFormField(
-                      initialValue: _initValues['imageUrl'],
+                      // initialValue: _initValues['imageUrl'], // not allowed when we have  controller
                       decoration: InputDecoration(labelText: 'Image URL'),
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
@@ -233,7 +238,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           price: _editedProduct.price,
                           description: _editedProduct.description,
                           imageUrl: value,
-                          id: null,
+                          id: _editedProduct.id,
+                          isFavorite: _editedProduct.isFavorite,
                         );
                       },
                       validator: (value) {
