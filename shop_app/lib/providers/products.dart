@@ -73,7 +73,7 @@ class Products with ChangeNotifier {
   Future<void> addProduct(Product product) {
     final url = Uri.https(
         'flutter-sadat-default-rtdb.europe-west1.firebasedatabase.app',
-        '/products.json');
+        '/products');
     return http
         .post(
       url,
@@ -95,6 +95,9 @@ class Products with ChangeNotifier {
       );
       _items.add(newProduct);
       notifyListeners();
+    }).catchError((error) {
+      print(error);
+      throw error;
     });
   }
 
