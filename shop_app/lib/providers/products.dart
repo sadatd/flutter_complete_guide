@@ -41,6 +41,10 @@ class Products with ChangeNotifier {
     // ),
   ];
 
+  final String authToken;
+
+  Products(this.authToken, this._items);
+
   var _showFavoritesOnly = false; // it is for filtering data globally
 
   List<Product> get items {
@@ -72,9 +76,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    final url = Uri.https(
-        'flutter-sadat-default-rtdb.europe-west1.firebasedatabase.app',
-        '/products.json');
+    final url = Uri.parse(
+        'flutter-sadat-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
     try {
       final response = await http.get(url);
       // below decode returns map of maps where key is prodId, value is Map(info of product)
@@ -95,9 +98,8 @@ class Products with ChangeNotifier {
         _items = loadedProducts;
         notifyListeners();
       });
-
     } catch (error) {
-      throw (error);
+      throw error;
     }
   }
 
