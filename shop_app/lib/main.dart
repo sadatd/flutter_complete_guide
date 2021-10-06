@@ -26,8 +26,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => Auth(),
         ),
+        // Syntax <Auth, Products>, Auth - class we depend on, Products - class that we will provide
         ChangeNotifierProxyProvider<Auth, Products>(
-          create: (ctx) => Products('', []), // TODO: solve this.
+          // ChNotPr. with create Auth() has to be before this
+          // create: (ctx) => Products('', []), // may be needed
+          // auth object is taken from ChangeNotifierProvider => Auth(), when Auth changes this rebuilds
+          // on rebuild we need to save old data(previousProducts)
           update: (ctx, auth, previousProducts) => Products(
             auth.token,
             previousProducts == null ? [] : previousProducts.items,
@@ -36,8 +40,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => Cart(),
         ),
-        ChangeNotifierProvider(
-          create: (ctx) => Orders(),
+        ChangeNotifierProxyProvider<Auth, Orders>(
+          update: (ctx, auth, previusOrders) => Orders(
+            auth.token,
+            previusOrders == null ? [] : previusOrders.orders,
+          ),
         ),
       ],
       child: Consumer<Auth>(
