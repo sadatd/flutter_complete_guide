@@ -76,9 +76,10 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString = filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     var url = Uri.parse(
-        'https://flutter-sadat-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
+        'https://flutter-sadat-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken&$filterString');
     try {
       final response = await http.get(url);
       // below decode returns map of maps where key is prodId, value is Map(info of product)
@@ -120,6 +121,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
+          'creatorId': userId,
         }),
       );
       final newProduct = Product(
