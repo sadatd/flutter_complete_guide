@@ -77,7 +77,7 @@ class Products with ChangeNotifier {
 
   Future<void> fetchAndSetProducts() async {
     final url = Uri.parse(
-        'flutter-sadat-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
+        'https://flutter-sadat-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
     try {
       final response = await http.get(url);
       // below decode returns map of maps where key is prodId, value is Map(info of product)
@@ -99,6 +99,7 @@ class Products with ChangeNotifier {
         notifyListeners();
       });
     } catch (error) {
+      print(error);
       throw error;
     }
   }
