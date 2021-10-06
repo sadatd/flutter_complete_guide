@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
           // on rebuild we need to save old data(previousProducts)
           update: (ctx, auth, previousProducts) => Products(
             auth.token,
+            auth.userId,
             previousProducts == null ? [] : previousProducts.items,
           ),
         ),

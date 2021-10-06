@@ -42,8 +42,9 @@ class Products with ChangeNotifier {
   ];
 
   final String authToken;
+  final String userId;
 
-  Products(this.authToken, this._items);
+  Products(this.authToken, this.userId, this._items);
 
   var _showFavoritesOnly = false; // it is for filtering data globally
 
@@ -76,7 +77,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    final url = Uri.parse(
+    var url = Uri.parse(
         'https://flutter-sadat-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
     try {
       final response = await http.get(url);
@@ -86,6 +87,10 @@ class Products with ChangeNotifier {
       if (extractedData == null) {
         return null;
       }
+      url = Uri.parse(
+          'https://flutter-sadat-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId.json?auth=$authToken');
+      final favoriteResponse = await http.get(url);
+      final favoriteData = json.decode(favoriteResponse.body);
       extractedData.forEach((prodId, product) {
         loadedProducts.add(Product(
           id: prodId,
@@ -93,7 +98,7 @@ class Products with ChangeNotifier {
           imageUrl: product['imageUrl'],
           price: product['price'],
           title: product['title'],
-          isFavorite: product['isFavorite'],
+          isFavorite: favoriteData == null ? false : favoriteData[prodId] ?? false,
         ));
         _items = loadedProducts;
         notifyListeners();
@@ -115,7 +120,6 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavorite': product.isFavorite,
         }),
       );
       final newProduct = Product(
