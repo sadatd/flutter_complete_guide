@@ -46,9 +46,8 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
             onTap: () { 
-              // TODO: logout from other screen not just product overview
-              // now, loging out form other screens seems to fail.
               Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed('/');
               Provider.of<Auth>(context, listen: false).logout();
             },
           ),
