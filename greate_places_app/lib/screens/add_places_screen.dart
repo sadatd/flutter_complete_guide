@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/image_input.dart';
+
 class AddPlacesScreen extends StatefulWidget {
   static const routeName = '/add-place';
   @override
@@ -7,6 +9,8 @@ class AddPlacesScreen extends StatefulWidget {
 }
 
 class _AddPlacesScreenState extends State<AddPlacesScreen> {
+  final _titleController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,10 +21,23 @@ class _AddPlacesScreenState extends State<AddPlacesScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            child: Column(
-              children: [
-          
-            ],),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: <Widget>[
+                    TextField(
+                      decoration: InputDecoration(labelText: 'Title'),
+                      controller: _titleController,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    ImageInput(),
+                  ],
+                ),
+              ),
+            ),
           ),
           RaisedButton.icon(
             icon: Icon(Icons.add),
