@@ -29,8 +29,10 @@ dependencies:
   path: ^1.8.0
   sqflite: ^2.0.0+4
   location: ^4.3.0
-
-
+  flutter_map: ^0.14.0
+  latlong2: ^0.8.1
+  google_maps_flutter: ^2.0.11
+  # flutter_osm_plugin: ^0.22.0 // 
 
 
   # The following adds the Cupertino Icons font to your application.
