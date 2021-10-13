@@ -1,16 +1,19 @@
 // import 'dart:html';
 import 'package:flutter/material.dart';
-
-import 'package:location/location.dart';
-import 'package:flutter_map/flutter_map.dart';
+import 'package:location/location.dart' as loc;
 import 'package:latlong2/latlong.dart';
+import 'package:geocoding/geocoding.dart';
 
-import '../screens/map_screen2.dart';
+
 import '../screens/map_screen.dart';
-import '../widgets/my_map.dart';
 import '../helpers/location_helper.dart';
 
 class LocationInput extends StatefulWidget {
+
+  final Function onSelectPlace;
+
+  LocationInput(this.onSelectPlace);
+
   @override
   _LocationInputState createState() => _LocationInputState();
 }
@@ -18,32 +21,36 @@ class LocationInput extends StatefulWidget {
 class _LocationInputState extends State<LocationInput> {
   String _previewImageUrl;
 
-  Future<void> _getCurrentUserLocation() async {
-    final locData = await Location().getLocation();
+  void _showPreview(double lat, double lng) {
     final staticMapImageUrl = LocationHelper.generateLocationPreviewImage(
-      longitude: locData.longitude,
-      latitude: locData.latitude,
+      longitude: lng,
+      latitude: lat,
     );
-
     setState(() {
       _previewImageUrl = staticMapImageUrl;
     });
   }
 
+  Future<void> _getCurrentUserLocation() async {
+    final locData = await loc.Location().getLocation();
+    _showPreview(locData.latitude, locData.longitude);
+    widget.onSelectPlace(locData.latitude, locData.longitude);
+  }
+
   Future<void> _selectOnMap() async {
-    final locData = await Location().getLocation();
-    final selectedLocation = await Navigator.of(context).push(
+    final selectedLocation = await Navigator.of(context).push<LatLng>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (ctx) => MapScreen(
-          isSelected: true,
+          isSelecting: true,
         ),
       ),
     );
     if (selectedLocation == null) {
       return;
     }
-    //
+    _showPreview(selectedLocation.latitude, selectedLocation.longitude);
+    widget.onSelectPlace(selectedLocation.latitude, selectedLocation.longitude);
   }
 
   @override
