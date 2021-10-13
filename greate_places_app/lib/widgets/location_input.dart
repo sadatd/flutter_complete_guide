@@ -4,12 +4,10 @@ import 'package:location/location.dart' as loc;
 import 'package:latlong2/latlong.dart';
 import 'package:geocoding/geocoding.dart';
 
-
 import '../screens/map_screen.dart';
 import '../helpers/location_helper.dart';
 
 class LocationInput extends StatefulWidget {
-
   final Function onSelectPlace;
 
   LocationInput(this.onSelectPlace);
@@ -32,9 +30,13 @@ class _LocationInputState extends State<LocationInput> {
   }
 
   Future<void> _getCurrentUserLocation() async {
-    final locData = await loc.Location().getLocation();
-    _showPreview(locData.latitude, locData.longitude);
-    widget.onSelectPlace(locData.latitude, locData.longitude);
+    try {
+      final locData = await loc.Location().getLocation();
+      _showPreview(locData.latitude, locData.longitude);
+      widget.onSelectPlace(locData.latitude, locData.longitude);
+    } catch (error) {
+      return;
+    }
   }
 
   Future<void> _selectOnMap() async {
