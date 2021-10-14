@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
+  final void Function(
+    String email,
+    String password,
+    String userName,
+    bool isLogin,
+  ) submitFn;
+
+  AuthForm(this.submitFn);
+
   @override
   _AuthFormState createState() => _AuthFormState();
 }
@@ -18,9 +27,12 @@ class _AuthFormState extends State<AuthForm> {
 
     if (_isValid) {
       _formKey.currentState!.save();
-      print(_userEmail);
-      print(_userName);
-      print(_userPassword);
+      widget.submitFn(
+        _userEmail.trim(),
+        _userPassword.trim(),
+        _userName.trim(),
+        _isLogin,
+      );
       // Use values to send auth request
     }
   }
@@ -54,20 +66,20 @@ class _AuthFormState extends State<AuthForm> {
                       _userEmail = value!;
                     },
                   ),
-                  if(!_isLogin)
-                  TextFormField(
-                    key: ValueKey('username'),
-                    validator: (value) {
-                      if (value!.isEmpty || value.length < 4) {
-                        return 'Username must be at least 4 character long.';
-                      }
-                      return null;
-                    },
-                    decoration: const InputDecoration(labelText: 'Username'),
-                    onSaved: (value) {
-                      _userName = value!;
-                    },
-                  ),
+                  if (!_isLogin)
+                    TextFormField(
+                      key: ValueKey('username'),
+                      validator: (value) {
+                        if (value!.isEmpty || value.length < 4) {
+                          return 'Username must be at least 4 character long.';
+                        }
+                        return null;
+                      },
+                      decoration: const InputDecoration(labelText: 'Username'),
+                      onSaved: (value) {
+                        _userName = value!;
+                      },
+                    ),
                   TextFormField(
                     key: ValueKey('password'),
                     validator: (value) {
@@ -96,7 +108,9 @@ class _AuthFormState extends State<AuthForm> {
                         _isLogin = !_isLogin;
                       });
                     },
-                    child: Text(_isLogin ? 'Create new account' : 'I already have an account'),
+                    child: Text(_isLogin
+                        ? 'Create new account'
+                        : 'I already have an account'),
                   ),
                 ],
               ),
