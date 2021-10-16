@@ -32,7 +32,6 @@ class Messages extends StatelessWidget {
                   chatDocs[index]['username'],
                   chatDocs[index]['userId'] ==
                       (futureSnapshot.data as FirebaseUser).uid,
-
                   myKey: ValueKey(chatDocs[index].documentID),
                 ),
               );
