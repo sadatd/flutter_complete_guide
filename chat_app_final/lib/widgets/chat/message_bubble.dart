@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class MessageBubble extends StatelessWidget {
   MessageBubble(
+    this.photoMessageUrl,
     this.message,
     this.userName,
     this.userImage,
@@ -13,6 +14,7 @@ class MessageBubble extends StatelessWidget {
   final String message;
   final String userName;
   final String userImage;
+  final String photoMessageUrl;
   final bool isMe;
 
   @override
@@ -55,15 +57,24 @@ class MessageBubble extends StatelessWidget {
                           : Theme.of(context).accentTextTheme.headline1!.color,
                     ),
                   ),
-                  Text(
-                    message,
-                    style: TextStyle(
-                      color: isMe
-                          ? Colors.black
-                          : Theme.of(context).accentTextTheme.headline1!.color,
+                  if (photoMessageUrl.isNotEmpty)
+                    Image.network(
+                      photoMessageUrl,
+                      width: 100,
                     ),
-                    textAlign: isMe ? TextAlign.end : TextAlign.start,
-                  ),
+                  if (message.isNotEmpty)
+                    Text(
+                      message,
+                      style: TextStyle(
+                        color: isMe
+                            ? Colors.black
+                            : Theme.of(context)
+                                .accentTextTheme
+                                .headline1!
+                                .color,
+                      ),
+                      textAlign: isMe ? TextAlign.end : TextAlign.start,
+                    ),
                 ],
               ),
             ),
@@ -82,7 +93,6 @@ class MessageBubble extends StatelessWidget {
       ],
       // overflow: Overflow.visible, // Change to clipBe
       clipBehavior: Clip.none,
-
     );
   }
 }
