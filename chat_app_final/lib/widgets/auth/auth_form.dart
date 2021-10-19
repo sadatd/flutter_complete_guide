@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import '';
 
 import '../pickers/user_image_picker.dart';
 
@@ -36,7 +39,25 @@ class _AuthFormState extends State<AuthForm> {
     _userImageFile = image;
   }
 
-  void _trySubmit() {
+  Future<UserCredential> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  void _submitGoogle() async {
+    UserCredential authResult = await signInWithGoogle();
+  }
+
+  void _trySubmit([bool isGoogle = false]) {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
     if (_userImageFile == null && !_isLogin) {
@@ -143,6 +164,14 @@ class _AuthFormState extends State<AuthForm> {
                         setState(() {
                           _isLogin = !_isLogin;
                         });
+                      },
+                    ),
+                    if (!widget.isLoading)
+                    FlatButton(
+                      textColor: Theme.of(context).primaryColor,
+                      child: Text('Google Signin'),
+                      onPressed: () {
+                        _submitGoogle();
                       },
                     )
                 ],

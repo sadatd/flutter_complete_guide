@@ -11,7 +11,41 @@ class _NewMessageState extends State<NewMessage> {
   final _controller = new TextEditingController();
   var _enteredMessage = '';
 
+  bool _isGoogle() {
+    return FirebaseAuth.instance.currentUser!.providerData[0].providerId ==
+        'google.com';
+  }
+
   void _sendMessage() async {
+    FocusScope.of(context).unfocus();
+    final user = FirebaseAuth.instance.currentUser!;
+    if (_isGoogle()) {
+      print(user.toString());
+      FirebaseFirestore.instance.collection('chat').add({
+        'text': _enteredMessage,
+        'createdAt': Timestamp.now(),
+        'userId': user.uid,
+        'username': user.displayName,
+        'userImage': user.photoURL,
+      });
+    } else {
+      print(user.toString());
+      final userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      FirebaseFirestore.instance.collection('chat').add({
+        'text': _enteredMessage,
+        'createdAt': Timestamp.now(),
+        'userId': user.uid,
+        'username': userData['username'],
+        'userImage': userData['image_url']
+      });
+    }
+    _controller.clear();
+  }
+
+  void _sendPhoto() async {
     FocusScope.of(context).unfocus();
     final user = FirebaseAuth.instance.currentUser;
     final userData = await FirebaseFirestore.instance
@@ -55,6 +89,13 @@ class _NewMessageState extends State<NewMessage> {
               Icons.send,
             ),
             onPressed: _enteredMessage.trim().isEmpty ? null : _sendMessage,
+          ),
+          IconButton(
+            color: Theme.of(context).primaryColor,
+            icon: Icon(
+              Icons.photo,
+            ),
+            onPressed: _enteredMessage.trim().isEmpty ? null : _sendPhoto,
           )
         ],
       ),

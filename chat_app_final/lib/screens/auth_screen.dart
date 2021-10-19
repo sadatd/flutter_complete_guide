@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../widgets/auth/auth_form.dart';
 
@@ -36,7 +37,8 @@ class _AuthScreenState extends State<AuthScreen> {
           email: email,
           password: password,
         );
-      } else { // It is signup
+      } else {
+        // It is signup
         authResult = await _auth.createUserWithEmailAndPassword(
           email: email,
           password: password,
@@ -45,7 +47,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final ref = FirebaseStorage.instance
             .ref()
             .child('user_image')
-            .child(authResult.user!.uid + '.jpg'); 
+            .child(authResult.user!.uid + '.jpg');
 
         await ref.putFile(image!);
 
