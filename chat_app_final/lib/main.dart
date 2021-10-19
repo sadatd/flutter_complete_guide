@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
                           ConnectionState.waiting) {
                         return SplashScreen();
                       }
-                      if (userSnapshot.hasData) {
+                      if (userSnapshot.hasData) { // we got successful login then
                         return ChatScreen();
                       }
                       return AuthScreen();
