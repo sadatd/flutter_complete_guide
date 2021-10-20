@@ -49,7 +49,7 @@ class _LocationImageState extends State<LocationImage> {
       items: [
         DropdownMenuItem<String>(
           value: 'image',
-          child: SendImagePicker(_pickedImage),
+          child: SendImagePicker(_pickedImage, true),
         ),
         DropdownMenuItem<String>(
           value: 'location',

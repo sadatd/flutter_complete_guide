@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SendImagePicker extends StatefulWidget {
-  SendImagePicker(this.imagePickFn);
-
+  bool showImage;
   final void Function(File pickedImage) imagePickFn;
+
+  SendImagePicker(this.imagePickFn, this.showImage);
+
   
   @override
   _SendImagePickerState createState() => _SendImagePickerState();
@@ -29,11 +31,18 @@ class _SendImagePickerState extends State<SendImagePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: <Widget>[
         IconButton(
           onPressed: _pickImage,
           icon: Icon(Icons.image),
+        ),
+        if (widget.showImage) 
+        CircleAvatar(
+          radius: 20,
+          backgroundColor: Colors.grey,
+          backgroundImage:
+              _pickedImage != null ? FileImage(_pickedImage!) : null,
         ),
       ],
     );
