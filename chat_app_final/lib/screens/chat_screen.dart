@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../widgets/chat/messages.dart';
 import '../widgets/chat/new_message.dart';
@@ -44,7 +45,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Container(
                   child: Row(
                     children: <Widget>[
-                      Icon(Icons.exit_to_app),
+                      Icon(Icons.exit_to_app, color: Colors.black,),
                       SizedBox(width: 8),
                       Text('Logout'),
                     ],
@@ -55,7 +56,9 @@ class _ChatScreenState extends State<ChatScreen> {
             ],
             onChanged: (itemIdentifier) {
               if (itemIdentifier == 'logout') {
+                GoogleSignIn().signOut();
                 FirebaseAuth.instance.signOut();
+                // FirebaseAuth.instance.
               }
             },
           ),
