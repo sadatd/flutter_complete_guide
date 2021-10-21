@@ -58,9 +58,15 @@ class MessageBubble extends StatelessWidget {
                     ),
                   ),
                   if (photoMessageUrl.isNotEmpty)
-                    Image.network(
-                      photoMessageUrl,
-                      width: 100,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(
+                          photoMessageUrl,
+                          // width: 100,
+                        ),
+                      ),
                     ),
                   if (message.isNotEmpty)
                     Text(

@@ -35,14 +35,17 @@ class _SendImagePickerState extends State<SendImagePicker> {
       children: <Widget>[
         IconButton(
           onPressed: _pickImage,
-          icon: Icon(Icons.image),
+          icon: Icon(Icons.camera_alt_rounded),
         ),
         if (widget.showImage) 
-        CircleAvatar(
-          radius: 20,
-          backgroundColor: Colors.grey,
-          backgroundImage:
-              _pickedImage != null ? FileImage(_pickedImage!) : null,
+        Padding(
+          padding: const EdgeInsets.only(right: 4.0),
+          child: CircleAvatar(
+            radius: 20,
+            backgroundColor: Colors.grey,
+            backgroundImage:
+                _pickedImage != null ? FileImage(_pickedImage!) : null,
+          ),
         ),
       ],
     );

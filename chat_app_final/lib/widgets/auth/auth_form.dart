@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '';
 
 import '../pickers/user_image_picker.dart';
 
@@ -41,14 +40,19 @@ class _AuthFormState extends State<AuthForm> {
 
   Future<UserCredential> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    print('1) ========== We are waiting for...');
 
     final GoogleSignInAuthentication? googleAuth =
         await googleUser?.authentication;
+
+    print('2) ========= Still we are waiting for...');
 
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
+    
+    print('3) ========= OFC, we are waiting for...');
 
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }

@@ -33,7 +33,8 @@ class _NewMessageState extends State<NewMessage> {
     final user = FirebaseAuth.instance.currentUser!;
     String photoMessageUrl = '';
 
-    if (_userImageFile != null) { // if there is image
+    if (_userImageFile != null) {
+      // if there is image
       final ref = FirebaseStorage.instance
           .ref()
           .child('user_message_images')
@@ -43,7 +44,7 @@ class _NewMessageState extends State<NewMessage> {
 
       photoMessageUrl = await ref.getDownloadURL();
     }
-  
+
     if (_isGoogle()) {
       FirebaseFirestore.instance.collection('chat').add({
         'photo_message_url': photoMessageUrl.isEmpty ? '' : photoMessageUrl,
@@ -82,27 +83,30 @@ class _NewMessageState extends State<NewMessage> {
       padding: EdgeInsets.all(8),
       child: Row(
         children: <Widget>[
+          SendImagePicker(_pickedImage, _userImageFile != null),
           Expanded(
             child: TextField(
               controller: _controller,
               textCapitalization: TextCapitalization.sentences,
               autocorrect: true,
               enableSuggestions: true,
-              decoration: InputDecoration(labelText: 'Send a message...'),
+              decoration: InputDecoration(
+                labelText: 'Send a message...',
+                suffixIcon: IconButton(
+                  color: Theme.of(context).primaryColor,
+                  icon: Icon(Icons.send),
+                  onPressed:
+                      _enteredMessage.trim().isEmpty && _userImageFile == null
+                          ? null
+                          : _send,
+                ),
+              ),
               onChanged: (value) {
                 setState(() {
                   _enteredMessage = value;
                 });
               },
             ),
-          ),
-          SendImagePicker(_pickedImage, _userImageFile != null),
-          IconButton(
-            color: Theme.of(context).primaryColor,
-            icon: Icon(Icons.send),
-            onPressed: _enteredMessage.trim().isEmpty && _userImageFile == null
-                ? null
-                : _send,
           ),
         ],
       ),
