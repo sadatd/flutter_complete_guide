@@ -58,7 +58,6 @@ class _ChatScreenState extends State<ChatScreen> {
               if (itemIdentifier == 'logout') {
                 GoogleSignIn().signOut();
                 FirebaseAuth.instance.signOut();
-                // FirebaseAuth.instance.
               }
             },
           ),

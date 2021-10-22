@@ -33,32 +33,38 @@ class _AuthFormState extends State<AuthForm> {
   var _userName = '';
   var _userPassword = '';
   File? _userImageFile;
+  bool isLoadingGoogle = false;
 
   void _pickedImage(File image) {
     _userImageFile = image;
   }
 
-  Future<UserCredential> signInWithGoogle() async {
+  void signInWithGoogle() async {
+    setState(() {
+      isLoadingGoogle = true;
+    });
+
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    print('1) ========== We are waiting for...');
 
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+    if (googleUser == null) {
+      return;
+    } else {
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser.authentication;
 
-    print('2) ========= Still we are waiting for...');
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-    
-    print('3) ========= OFC, we are waiting for...');
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
-
-  void _submitGoogle() async {
-    UserCredential authResult = await signInWithGoogle();
+      if (mounted) {
+        setState(() {
+          isLoadingGoogle = true;
+        });
+      }
+    }
   }
 
   void _trySubmit([bool isGoogle = false]) {
@@ -152,15 +158,15 @@ class _AuthFormState extends State<AuthForm> {
                     },
                   ),
                   SizedBox(height: 12),
-                  if (widget.isLoading) CircularProgressIndicator(),
-                  if (!widget.isLoading)
-                    RaisedButton(
+                  if (widget.isLoading || isLoadingGoogle)
+                    CircularProgressIndicator(),
+                  if (!widget.isLoading && !isLoadingGoogle)
+                    ElevatedButton(
                       child: Text(_isLogin ? 'Login' : 'Signup'),
                       onPressed: _trySubmit,
                     ),
-                  if (!widget.isLoading)
-                    FlatButton(
-                      textColor: Theme.of(context).primaryColor,
+                  if (!widget.isLoading && !isLoadingGoogle)
+                    TextButton(
                       child: Text(_isLogin
                           ? 'Create new account'
                           : 'I already have an account'),
@@ -170,12 +176,17 @@ class _AuthFormState extends State<AuthForm> {
                         });
                       },
                     ),
-                    if (!widget.isLoading)
-                    FlatButton(
-                      textColor: Theme.of(context).primaryColor,
-                      child: Text('Google Signin'),
+                  if (!widget.isLoading && !isLoadingGoogle)
+                    ElevatedButton.icon(
+                      style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade600)),
+                      icon: Icon(
+                        Icons.g_mobiledata,
+                        // color: Colors.blue,
+                        size: 30,
+                      ),
+                      label: Text('Sign in with Google'),
                       onPressed: () {
-                        _submitGoogle();
+                        signInWithGoogle();
                       },
                     )
                 ],
